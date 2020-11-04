@@ -1,6 +1,6 @@
 @import "../../_route-animation-host";
 
-.parallax-card #{'/deep/'} {
+.parallax-card #{'::ng-deep'} {
 
   .card-content {
     padding: 0;

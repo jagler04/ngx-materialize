@@ -1,5 +1,5 @@
 @import "../../_route-animation-host";
 
-#{'/deep/'} .color-hoverable {
+#{'::ng-deep'} .color-hoverable {
   background-color: #333333;
 }

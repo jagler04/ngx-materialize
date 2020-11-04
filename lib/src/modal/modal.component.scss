@@ -18,7 +18,7 @@
   }
 }
 
-#{'/deep/'} mz-modal-header {
+#{'::ng-deep'} mz-modal-header {
   h5, h6
   {
     margin-top: 0;

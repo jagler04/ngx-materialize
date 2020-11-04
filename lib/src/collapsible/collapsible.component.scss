@@ -1,6 +1,6 @@
 // In some browser, using some specific elements in the header such as image will make the header end up with 1 extra pixel
 // for height compared to he container. This style is to prevent that extra pixel from pushing the content of the next element.
-#{'/deep/'} {
+#{'::ng-deep'} {
   .collapsible-header {
     clear: both;
   }

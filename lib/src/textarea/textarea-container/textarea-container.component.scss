@@ -1,4 +1,4 @@
-:host #{'/deep/'} textarea {
+:host #{'::ng-deep'} textarea {
   // fix unwanted space under the textarea on chrome
   // https://stackoverflow.com/a/6939674/5583283
   display: block;

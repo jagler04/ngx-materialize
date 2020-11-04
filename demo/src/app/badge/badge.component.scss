@@ -1,6 +1,6 @@
 @import "../../_route-animation-host";
 
-#{'/deep/'} {
+#{'::ng-deep'} {
   span.badge {
     float: left;
 

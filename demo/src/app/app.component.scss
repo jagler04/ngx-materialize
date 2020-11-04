@@ -1,7 +1,7 @@
 @import "../_variables";
 
 header {
-  #{'/deep/'} {
+  #{'::ng-deep'} {
     .side-nav {
       padding-bottom: 0;
       height: 100%;
@@ -101,7 +101,7 @@ main {
 
 /* mCustomScrollbar override */
 
-#{'/deep/'} {
+#{'::ng-deep'} {
   .mCSB_dragger_bar {
     width: 8px !important;
     border-radius: 0px !important;

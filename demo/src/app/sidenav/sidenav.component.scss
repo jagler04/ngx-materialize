@@ -25,7 +25,7 @@
   }
 }
 
-:host #{'/deep/'} {
+:host #{'::ng-deep'} {
   a {
     i.caret {
       float: right;

@@ -1,4 +1,4 @@
-.nav-wrapper #{'/deep/'} {
+.nav-wrapper #{'::ng-deep'} {
   .btn {
     i {
       // fix button icon vertical alignment in navbar
