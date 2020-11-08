@@ -3,7 +3,7 @@ import {
   Component,
   ElementRef,
   Input,
-  Renderer,
+  Renderer2,
 } from '@angular/core';
 
 import { HandlePropChanges } from '../shared/index';
@@ -27,7 +27,7 @@ export class MzDropdownComponent extends HandlePropChanges implements AfterViewI
 
   dropdownButtonElement: JQuery;
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer) {
+  constructor(private elementRef: ElementRef, private renderer: Renderer2) {
     super();
    }
 
@@ -38,7 +38,10 @@ export class MzDropdownComponent extends HandlePropChanges implements AfterViewI
   }
 
   close() {
-    setTimeout(() => this.renderer.invokeElementMethod(this.dropdownButtonElement, 'dropdown', ['close']));
+    setTimeout(() => {
+      (this.dropdownButtonElement as any).dropdown.apply(this.dropdownButtonElement, ['close'])
+    });
+    //this.renderer.invokeElementMethod(this.dropdownButtonElement, 'dropdown', ['close']));
   }
 
   initDropdownButtonElement() {
@@ -61,7 +64,8 @@ export class MzDropdownComponent extends HandlePropChanges implements AfterViewI
   }
 
   handleDataActivates() {
-    this.renderer.setElementAttribute(this.dropdownButtonElement[0], 'data-activates', this.id);
+    (this.dropdownButtonElement[0] as any).dataActivates.apply(this.dropdownButtonElement[0], this.id);
+    //this.renderer.setElementAttribute(this.dropdownButtonElement[0], 'data-activates', this.id);
   }
 
   handleDropdown() {
@@ -79,7 +83,8 @@ export class MzDropdownComponent extends HandlePropChanges implements AfterViewI
     };
 
     // Initialize dropdown button for dropdown
-    this.renderer.invokeElementMethod(this.dropdownButtonElement, 'dropdown', [options]);
+    (this.dropdownButtonElement as any).dropdown.apply(this.dropdownButtonElement, [options]);
+    //this.renderer.invokeElementMethod(this.dropdownButtonElement, 'dropdown', [options]);
   }
 
   handleProperties() {
@@ -88,7 +93,10 @@ export class MzDropdownComponent extends HandlePropChanges implements AfterViewI
   }
 
   open() {
-    setTimeout(() => this.renderer.invokeElementMethod(this.dropdownButtonElement, 'dropdown', ['open']));
+    setTimeout(() => {
+      (this.dropdownButtonElement as any).dropdown.apply(this.dropdownButtonElement, ['open']);
+    });
+    //this.renderer.invokeElementMethod(this.dropdownButtonElement, 'dropdown', ['open']));
   }
 
   validateProperties() {

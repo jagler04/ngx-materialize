@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, Input, OnChanges, OnDestroy, OnInit, Renderer, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, Input, OnChanges, OnDestroy, OnInit, Renderer2, SimpleChanges } from '@angular/core';
 
 @Directive({
   selector: '[mzTooltip], [mz-tooltip]',
@@ -13,7 +13,7 @@ export class MzTooltipDirective implements OnInit, AfterViewInit, OnChanges, OnD
 
   constructor(
     private elementRef: ElementRef,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
@@ -35,7 +35,8 @@ export class MzTooltipDirective implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   ngOnDestroy() {
-    this.renderer.invokeElementMethod(this.targetElement, 'tooltip', ['remove']);
+    (this.targetElement as any).tooltip.apply(this.targetElement, ['remove']);
+    //this.renderer.invokeElementMethod(this.targetElement, 'tooltip', ['remove']);
   }
 
   initElements() {
@@ -50,6 +51,7 @@ export class MzTooltipDirective implements OnInit, AfterViewInit, OnChanges, OnD
       tooltip: this.tooltip,
     };
 
-    this.renderer.invokeElementMethod(this.targetElement, 'tooltip', [tooltipOptions]);
+    (this.targetElement as any).tooltip.apply(this.targetElement, [tooltipOptions]);
+    //this.renderer.invokeElementMethod(this.targetElement, 'tooltip', [tooltipOptions]);
   }
 }

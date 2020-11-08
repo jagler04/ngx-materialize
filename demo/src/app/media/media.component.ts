@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { Media, MzMediaService } from 'ngx-materialize';
 import { Observable } from 'rxjs';
 
@@ -21,7 +21,7 @@ export class MediaComponent implements OnInit {
 
   constructor(
     private mediaService: MzMediaService,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) {
     this.media = this.mediaService.media;
     this.greaterThanSmall = this.mediaService.isActive('gt-s');
@@ -32,6 +32,7 @@ export class MediaComponent implements OnInit {
   ngOnInit() {
     // initialize scrollspy
     const scrollSpy = $('.scrollspy');
-    this.renderer.invokeElementMethod(scrollSpy, 'scrollSpy');
+    //this.renderer.invokeElementMethod(scrollSpy, 'scrollSpy');
+    (scrollSpy as any).scrollSpy.apply(scrollSpy);
   }
 }

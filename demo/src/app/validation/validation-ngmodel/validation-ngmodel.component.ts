@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -36,11 +36,13 @@ export class ValidationNgmodelComponent implements OnInit {
   };
 
   constructor(
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
-    this.renderer.invokeElementMethod($('ul.tabs'), 'tabs');
+    var tabs = $('ul.tabs');
+    (tabs as any).tabs.apply(tabs);
+    //this.renderer.invokeElementMethod($('ul.tabs'), 'tabs');
   }
 
   clear() {

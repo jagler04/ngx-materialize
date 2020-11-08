@@ -7,7 +7,7 @@ import {
   Input,
   OnInit,
   Output,
-  Renderer,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 
@@ -28,7 +28,7 @@ export class MzModalComponent extends HandlePropChanges implements OnInit, After
 
   modalElement: JQuery;
 
-  constructor(public renderer: Renderer) {
+  constructor(public renderer: Renderer2) {
     super();
   }
 
@@ -53,7 +53,8 @@ export class MzModalComponent extends HandlePropChanges implements OnInit, After
   }
 
   initModal() {
-    this.renderer.invokeElementMethod(this.modalElement, 'modal', [this.options]);
+    (this.modalElement as any).modal.apply(this.modalElement, [this.options]);
+    //this.renderer.invokeElementMethod(this.modalElement, 'modal', [this.options]);
   }
 
   handleProperties() {
@@ -72,11 +73,13 @@ export class MzModalComponent extends HandlePropChanges implements OnInit, After
   }
 
   openModal() {
-    this.renderer.invokeElementMethod(this.modalElement, 'modal', ['open']);
+    (this.modalElement as any).modal.apply(this.modalElement, ['open']);
+    //this.renderer.invokeElementMethod(this.modalElement, 'modal', ['open']);
   }
 
   closeModal() {
-    this.renderer.invokeElementMethod(this.modalElement, 'modal', ['close']);
+    (this.modalElement as any).modal.apply(this.modalElement, ['close']);
+    //this.renderer.invokeElementMethod(this.modalElement, 'modal', ['close']);
   }
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Renderer } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -38,11 +38,12 @@ export class ValidationFormStateComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
-    this.renderer.invokeElementMethod($('ul.tabs'), 'tabs');
+    ($('ul.tabs') as any).tabs.apply($('ul.tabs'));
+    //this.renderer.invokeElementMethod($('ul.tabs'), 'tabs');
     this.buildForm();
     this.initCheckboxSubscription();
   }

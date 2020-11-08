@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnInit, Renderer } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: '[mzSwitch], [mz-switch]',
@@ -12,7 +12,7 @@ export class MzSwitchDirective implements OnInit {
 
   constructor(
     private elementRef: ElementRef,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
@@ -33,7 +33,8 @@ export class MzSwitchDirective implements OnInit {
   handleInputType() {
     const type = this.switchElement.attr('type');
     if (type !== 'checkbox') {
-      this.renderer.setElementAttribute(this.switchElement[0], 'type', 'checkbox');
+      this.renderer.setAttribute(this.switchElement[0], 'type', 'checkbox');
+      // this.renderer.setElementAttribute(this.switchElement[0], 'type', 'checkbox');
     }
   }
 }

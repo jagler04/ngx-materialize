@@ -3,7 +3,7 @@ import {
     ElementRef,
     Input,
     OnInit,
-    Renderer,
+    Renderer2,
 } from '@angular/core';
 
 import { HandlePropChanges } from '../shared/index';
@@ -22,7 +22,7 @@ export class MzButtonDirective extends HandlePropChanges implements OnInit {
   @Input() large: boolean;
   @Input() noWaves: boolean;
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer) {
+  constructor(private elementRef: ElementRef, private renderer: Renderer2) {
     super();
   }
 
@@ -43,31 +43,44 @@ export class MzButtonDirective extends HandlePropChanges implements OnInit {
   }
 
   initMaterialize() {
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'btn', true);
+    this.renderer.addClass(this.elementRef.nativeElement, 'btn');
   }
 
   handleDisabled() {
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'disabled', this.disabled);
+    this.disabled ? this.renderer.addClass(this.elementRef.nativeElement, 'disabled') : this.renderer.removeClass(this.elementRef.nativeElement, 'disabled');
+    //this.renderer.setElementClass(this.elementRef.nativeElement, 'disabled', this.disabled);
   }
 
   handleFlat() {
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'btn', !this.flat);
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'btn-flat', this.flat);
+    !this.flat ? this.renderer.addClass(this.elementRef.nativeElement, 'btn')
+    : this.renderer.removeClass(this.elementRef.nativeElement, 'btn');
+    //this.renderer.setElementClass(this.elementRef.nativeElement, 'btn', !this.flat);
+    this.flat ? this.renderer.addClass(this.elementRef.nativeElement, 'btn-flat')
+    : this.renderer.removeClass(this.elementRef.nativeElement, 'btn-flat');
+    //this.renderer.setElementClass(this.elementRef.nativeElement, 'btn-flat', this.flat);
   }
 
   handleFloat() {
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'btn-floating', this.float);
+    this.flat ? this.renderer.addClass(this.elementRef.nativeElement, 'btn-floating')
+    : this.renderer.removeClass(this.elementRef.nativeElement, 'btn-floating');
+    //this.renderer.setElementClass(this.elementRef.nativeElement, 'btn-floating', this.float);
   }
 
   handleLarge() {
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'btn-large', this.large);
+    this.large ? this.renderer.addClass(this.elementRef.nativeElement, 'btn-large')
+    : this.renderer.removeClass(this.elementRef.nativeElement, 'btn-large');
+    //this.renderer.setElementClass(this.elementRef.nativeElement, 'btn-large', this.large);
   }
 
   handleNoWaves() {
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'waves-effect', !this.noWaves);
+    !this.noWaves ? this.renderer.addClass(this.elementRef.nativeElement, 'waves-effect')
+      : this.renderer.removeClass(this.elementRef.nativeElement, 'waves-effect');
+    //this.renderer.setElementClass(this.elementRef.nativeElement, 'waves-effect', !this.noWaves);
 
     if (!this.flat) {
-      this.renderer.setElementClass(this.elementRef.nativeElement, 'waves-light', !this.noWaves);
+      !this.noWaves ? this.renderer.addClass(this.elementRef.nativeElement, 'waves-light')
+        : this.renderer.removeClass(this.elementRef.nativeElement, 'waves-light');
+      //this.renderer.setElementClass(this.elementRef.nativeElement, 'waves-light', !this.noWaves);
     }
   }
 }

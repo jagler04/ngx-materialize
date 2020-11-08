@@ -8,8 +8,7 @@
       "jquery",
       "materialize-css",
       "mcustomscrollbar",
-      "node",
-      "prismjs"
+      "node"
     ],
     "paths": {
       "@angular/*": ["node_modules/@angular/*"],

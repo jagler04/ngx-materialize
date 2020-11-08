@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { MzModalService } from 'ngx-materialize';
 
 import { ROUTE_ANIMATION, ROUTE_ANIMATION_HOST } from '../app.routing.animation';
@@ -56,13 +56,14 @@ export class ModalComponent implements OnInit {
 
   constructor(
     private modalService: MzModalService,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
     // initialize scrollspy
     const scrollSpy = $('.scrollspy');
-    this.renderer.invokeElementMethod(scrollSpy, 'scrollSpy');
+    //this.renderer.invokeElementMethod(scrollSpy, 'scrollSpy');
+    (scrollSpy as any).scrollSpy.apply(scrollSpy);
   }
 
   openServiceModal() {

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Input, NgZone, OnDestroy, OnInit, Optional, Renderer } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Input, NgZone, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
@@ -35,7 +35,7 @@ export class MzTimepickerDirective extends HandlePropChanges implements OnInit, 
     @Optional() private ngControl: NgControl,
     private changeDetectorRef: ChangeDetectorRef,
     private elementRef: ElementRef,
-    private renderer: Renderer,
+    private renderer: Renderer2,
     private zone: NgZone,
   ) {
     super();
@@ -83,11 +83,13 @@ export class MzTimepickerDirective extends HandlePropChanges implements OnInit, 
       },
     });
 
-    this.renderer.invokeElementMethod(this.inputElement, 'pickatime', [this.options]);
+    (this.inputElement as any).pickatime.apply(this.inputElement, [this.options]);
+    //this.renderer.invokeElementMethod(this.inputElement, 'pickatime', [this.options]);
 
     if (this.ngControl) {
       // set ngControl value according to selected time in timepicker
-      this.inputElement.on('change', (event: JQuery.Event<HTMLInputElement>) => {
+      //this.inputElement.on('change', (event: JQuery.Event<HTMLInputElement>) => {
+      this.inputElement.on('change', (event: JQuery.TriggeredEvent<HTMLInputElement>) => {
         this.ngControl.control.setValue(event.target.value);
 
         // mark for change detection
@@ -101,7 +103,8 @@ export class MzTimepickerDirective extends HandlePropChanges implements OnInit, 
     const labelElement = document.createElement('label');
     labelElement.setAttribute('for', this.id);
 
-    this.renderer.invokeElementMethod(this.inputElement, 'after', [labelElement]);
+    (this.inputElement as any).after.apply(this.inputElement, [labelElement]);
+    //this.renderer.invokeElementMethod(this.inputElement, 'after', [labelElement]);
 
     return $(labelElement);
   }
@@ -116,12 +119,15 @@ export class MzTimepickerDirective extends HandlePropChanges implements OnInit, 
   }
 
   handleLabel() {
-    this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
+    (this.labelElement as any).text.apply(this.labelElement, [this.label]);
+    //this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
   }
 
   handlePlaceholder() {
     const placeholder = !!this.placeholder ? this.placeholder : null;
-    this.renderer.setElementAttribute(this.inputElement[0], 'placeholder', placeholder);
+    placeholder === null ? this.renderer.setAttribute(this.inputElement[0], 'placeholder', placeholder)
+            : this.renderer.removeAttribute(this.inputElement[0], 'placeholder');
+    //this.renderer.setElementAttribute(this.inputElement[0], 'placeholder', placeholder);
 
     // fix issue in IE where having a placeholder on input make control dirty and trigger validation
     // on page load... note that it still trigger validation on focus and would need a better fix
@@ -144,7 +150,9 @@ export class MzTimepickerDirective extends HandlePropChanges implements OnInit, 
       .subscribe(() => {
         const inputValue = this.inputElement[0].value;
         const isActive = !!this.placeholder || !!inputValue;
-        this.renderer.setElementClass(this.labelElement[0], 'active', isActive);
+        isActive ? this.renderer.addClass(this.labelElement[0], 'active')
+              : this.renderer.removeClass(this.labelElement[0], 'active');
+        //this.renderer.setElementClass(this.labelElement[0], 'active', isActive);
       });
   }
 }

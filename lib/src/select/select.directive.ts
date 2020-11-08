@@ -7,7 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  Renderer,
+  Renderer2,
 } from '@angular/core';
 
 import { HandlePropChanges } from '../shared';
@@ -41,7 +41,7 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
   constructor(
     private elementRef: ElementRef,
     public changeDetectorRef: ChangeDetectorRef,
-    public renderer: Renderer,
+    public renderer: Renderer2,
   ) {
     super();
   }
@@ -65,7 +65,8 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
   }
 
   ngOnDestroy() {
-    this.renderer.invokeElementMethod(this.selectElement, 'material_select', ['destroy']);
+    (this.selectElement as any).material_select.apply(this.selectElement, ['destroy']);
+    //this.renderer.invokeElementMethod(this.selectElement, 'material_select', ['destroy']);
     this.selectElement.off();
     this.mutationObserver.disconnect();
   }
@@ -95,7 +96,8 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
   }
 
   initMaterialSelect() {
-    this.renderer.invokeElementMethod(this.selectElement, 'material_select');
+    (this.selectElement as any).material_select.apply(this.selectElement);
+    //this.renderer.invokeElementMethod(this.selectElement, 'material_select');
   }
 
   /**
@@ -111,7 +113,8 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
         const customEvent = document.createEvent('CustomEvent');
         customEvent.initCustomEvent('change', true, false, event.target.value);
 
-        this.renderer.invokeElementMethod(this.selectElement[0], 'dispatchEvent', [customEvent]);
+        (this.selectElement[0] as any).dispatchEvent.apply(this.selectElement[0], [customEvent]);
+        //this.renderer.invokeElementMethod(this.selectElement[0], 'dispatchEvent', [customEvent]);
       }
     });
 
@@ -122,7 +125,8 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
   }
 
   handleDOMEvents() {
-    this.inputElement.on('blur focus', (event: JQuery.Event) => {
+    //this.inputElement.on('blur focus', (event: JQuery.Event) => {
+    this.inputElement.on('blur focus', (event: JQuery.TriggeredEvent) => {
       const customEvent = document.createEvent('CustomEvent');
       customEvent.initCustomEvent(event.type, true, false, event.target);
       this.selectElement[0].dispatchEvent(customEvent);
@@ -133,7 +137,8 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
     const labelElement = document.createElement('label');
     labelElement.setAttribute('for', this.id);
 
-    this.renderer.invokeElementMethod(this.selectElement, 'after', [labelElement]);
+    (this.selectElement as any).after.apply(this.selectElement, [labelElement]);
+    //this.renderer.invokeElementMethod(this.selectElement, 'after', [labelElement]);
 
     return $(labelElement);
   }
@@ -152,7 +157,8 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
       && this.selectElement.children('option[selected]').length === 0
       && !this.selectElement[0].hasAttribute('multiple')
     ) {
-      this.renderer.setElementAttribute(firstOptionElement[0], 'selected', '');
+      this.renderer.setAttribute(firstOptionElement[0], 'selected', '');
+      //this.renderer.setElementAttribute(firstOptionElement[0], 'selected', '');
     }
   }
 
@@ -161,21 +167,25 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
     // but it might be set by another process (for example reactive form applies disabled attribute itself)
     // therefore we don't want to remove or add it here
     if (this.disabled != null) {
-      this.renderer.setElementProperty(this.selectElement[0], 'disabled', !!this.disabled);
+      this.renderer.setProperty(this.selectElement[0], 'disabled', !!this.disabled);
+      //this.renderer.setElementProperty(this.selectElement[0], 'disabled', !!this.disabled);
       this.updateMaterialSelect();
     }
   }
 
   handleLabel() {
     if (this.label != null) {
-      this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
+      (this.labelElement as any).text.apply(this.labelElement, [this.label]);
+      //this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
     }
   }
 
   handleFilledIn() {
     if (this.checkboxElements.length > 0) {
       this.checkboxElements.toArray().forEach(checkboxElement => {
-        this.renderer.setElementClass(checkboxElement, 'filled-in', !!this.filledIn);
+        !!this.filledIn ? this.renderer.addClass(checkboxElement, 'filled-in')
+                : this.renderer.removeClass(checkboxElement, 'filled-in');
+        //this.renderer.setElementClass(checkboxElement, 'filled-in', !!this.filledIn);
       });
     }
   }
@@ -188,12 +198,15 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
 
       if (this.placeholder) {
         // update existing placeholder element
-        this.renderer.invokeElementMethod(placeholderElement, 'text', [this.placeholder]);
+        (placeholderElement as any).text.apply(placeholderElement, [this.placeholder]);
+        //this.renderer.invokeElementMethod(placeholderElement, 'text', [this.placeholder]);
       } else {
         // remove existing placeholder element
-        this.renderer.invokeElementMethod(placeholderElement, 'remove');
+        (placeholderElement as any).remove.apply(placeholderElement);
+        //this.renderer.invokeElementMethod(placeholderElement, 'remove');
         // Force trigger change event since it's not triggered when value change programmatically
-        this.renderer.invokeElementMethod(this.selectElement, 'change');
+        (this.selectElement as any).change.apply(this.selectElement);
+        //this.renderer.invokeElementMethod(this.selectElement, 'change');
         // Required if we don't want exception "Expression has changed after it was checked." https://github.com/angular/angular/issues/6005
         this.changeDetectorRef.detectChanges();
       }
@@ -206,7 +219,8 @@ export class MzSelectDirective extends HandlePropChanges implements OnInit, OnDe
         placeholderOption.value = null;
         placeholderOption.appendChild(placeholderText);
 
-        this.renderer.invokeElementMethod(this.selectElement, 'prepend', [placeholderOption]);
+        (this.selectElement as any).prepend.apply(this.selectElement, [placeholderOption]);
+        //this.renderer.invokeElementMethod(this.selectElement, 'prepend', [placeholderOption]);
       }
     }
 

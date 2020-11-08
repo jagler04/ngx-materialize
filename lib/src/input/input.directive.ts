@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit, Optional, Renderer } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 import { first, skipWhile } from 'rxjs/operators';
@@ -29,7 +29,7 @@ export class MzInputDirective extends HandlePropChanges implements OnInit, OnDes
   constructor(
     @Optional() private ngControl: NgControl,
     private elementRef: ElementRef,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) {
     super();
   }
@@ -75,7 +75,8 @@ export class MzInputDirective extends HandlePropChanges implements OnInit, OnDes
     const labelElement = document.createElement('label');
     labelElement.setAttribute('for', this.id);
 
-    this.renderer.invokeElementMethod(this.inputElement, 'after', [labelElement]);
+    (this.inputElement as any).after.apply(this.inputElement, [labelElement]);
+    //this.renderer.invokeElementMethod(this.inputElement, 'after', [labelElement]);
 
     return $(labelElement);
   }
@@ -94,7 +95,9 @@ export class MzInputDirective extends HandlePropChanges implements OnInit, OnDes
       && this.autocomplete.data != null
       && Object.keys(this.autocomplete.data).length > 0;
 
-    this.renderer.setElementClass(this.inputElement[0], 'autocomplete', isAutocomplete);
+    isAutocomplete ? this.renderer.addClass(this.inputElement[0], 'autocomplete')
+              : this.renderer.removeClass(this.inputElement[0], 'autocomplete');
+    //this.renderer.setElementClass(this.inputElement[0], 'autocomplete', isAutocomplete);
 
     if (this.autocomplete != null) {
       // wait until autocomplete is defined before to invoke
@@ -103,26 +106,37 @@ export class MzInputDirective extends HandlePropChanges implements OnInit, OnDes
         .pipe(
           skipWhile(() => !this.inputElement['autocomplete']),
           first())
-        .subscribe(() => this.renderer.invokeElementMethod(this.inputElement, 'autocomplete', [this.autocomplete]));
+        .subscribe(() =>
+        {
+          (this.inputElement as any).autocomplete.apply(this.inputElement, [this.autocomplete]);
+        });
+        //this.renderer.invokeElementMethod(this.inputElement, 'autocomplete', [this.autocomplete]));
     }
   }
 
   handleDataError() {
-    this.renderer.setElementAttribute(this.labelElement[0], 'data-error', this.dataError);
+    this.dataError === "" ? this.renderer.setAttribute(this.labelElement[0], 'data-error', this.dataError)
+            :this.renderer.removeAttribute(this.labelElement[0], 'data-error');
+    //this.renderer.setElementAttribute(this.labelElement[0], 'data-error', this.dataError);
   }
 
   handleDataSuccess() {
-    this.renderer.setElementAttribute(this.labelElement[0], 'data-success', this.dataSuccess);
+    this.dataSuccess !== "" ? this.renderer.setAttribute(this.labelElement[0], 'data-success', this.dataSuccess)
+              : this.renderer.removeAttribute(this.labelElement[0], 'data-success', this.dataSuccess);
+    //this.renderer.setElementAttribute(this.labelElement[0], 'data-success', this.dataSuccess);
   }
 
   handleLabel() {
-    this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
+    (this.labelElement as any).text.apply(this.labelElement, [this.label]);
+    //this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
   }
 
   handleLength() {
     const length = this.length ? this.length.toString() : null;
 
-    this.renderer.setElementAttribute(this.inputElement[0], 'data-length', length);
+    length === null ? this.renderer.removeAttribute(this.inputElement[0], 'data-length')
+              : this.renderer.setAttribute(this.inputElement[0], 'data-length', length);
+    //this.renderer.setElementAttribute(this.inputElement[0], 'data-length', length);
 
     if (length) {
       this.setCharacterCount();
@@ -133,7 +147,9 @@ export class MzInputDirective extends HandlePropChanges implements OnInit, OnDes
 
   handlePlaceholder() {
     const placeholder = !!this.placeholder ? this.placeholder : null;
-    this.renderer.setElementAttribute(this.inputElement[0], 'placeholder', placeholder);
+    placeholder === null ? this.renderer.removeAttribute(this.inputElement[0], 'placeholder')
+            : this.renderer.setAttribute(this.inputElement[0], 'placeholder', placeholder);
+    //this.renderer.setElementAttribute(this.inputElement[0], 'placeholder', placeholder);
 
     // fix issue in IE where having a placeholder on input make control dirty
     // note that it still trigger validation on focus but this is better than nothing
@@ -147,24 +163,31 @@ export class MzInputDirective extends HandlePropChanges implements OnInit, OnDes
   }
 
   handleValidate() {
-    this.renderer.setElementClass(this.inputElement[0], 'validate', this.validate);
+    this.validate ? this.renderer.addClass(this.inputElement[0], 'validate')
+            : this.renderer.removeClass(this.inputElement[0], 'validate');
+    //this.renderer.setElementClass(this.inputElement[0], 'validate', this.validate);
 
     if (this.validate) {
       // force validation
-      this.renderer.invokeElementMethod(this.inputElement, 'trigger', ['blur']);
+      (this.inputElement as any).trigger.apply(this.inputElement, ['blur']);
+      //this.renderer.invokeElementMethod(this.inputElement, 'trigger', ['blur']);
     } else {
       this.removeValidationClasses();
     }
   }
 
   setCharacterCount() {
-    this.renderer.invokeElementMethod(this.inputElement, 'characterCounter');
+    (this.inputElement as any).characterCounter.apply(this.inputElement);
+    //this.renderer.invokeElementMethod(this.inputElement, 'characterCounter');
 
     // force validation
     // need setTimeout otherwise it wont trigger validation right away
     setTimeout(() => {
-      this.renderer.invokeElementMethod(this.inputElement, 'trigger', ['input']);
-      this.renderer.invokeElementMethod(this.inputElement, 'trigger', ['blur']);
+      (this.inputElement as any).trigger.apply(this.inputElement, ['input']);
+      (this.inputElement as any).trigger.apply(this.inputElement, ['blur']);
+
+      //this.renderer.invokeElementMethod(this.inputElement, 'trigger', ['input']);
+      //this.renderer.invokeElementMethod(this.inputElement, 'trigger', ['blur']);
     });
   }
 
@@ -174,19 +197,24 @@ export class MzInputDirective extends HandlePropChanges implements OnInit, OnDes
     setTimeout(() => {
       const inputValue = (<HTMLInputElement>this.inputElement[0]).value;
       const isActive = !!this.placeholder || !!inputValue;
-      this.renderer.setElementClass(this.labelElement[0], 'active', isActive);
+      isActive ? this.renderer.addClass(this.labelElement[0], 'active')
+            : this.renderer.removeClass(this.labelElement[0], 'active');
+      //this.renderer.setElementClass(this.labelElement[0], 'active', isActive);
     });
   }
 
   removeCharacterCount() {
-    this.renderer.invokeElementMethod(this.inputElement.siblings('.character-counter'), 'remove');
+    (this.inputElement.siblings('.character-counter') as any).remove.apply(this.inputElement.siblings('.character-counter'));
+    //this.renderer.invokeElementMethod(this.inputElement.siblings('.character-counter'), 'remove');
 
     this.removeValidationClasses();
   }
 
   removeValidationClasses() {
     // reset valid/invalid state
-    this.renderer.setElementClass(this.inputElement[0], 'invalid', false);
-    this.renderer.setElementClass(this.inputElement[0], 'valid', false);
+    this.renderer.removeClass(this.inputElement[0], 'invalid');
+    this.renderer.removeClass(this.inputElement[0], 'valid');
+    //this.renderer.setElementClass(this.inputElement[0], 'invalid', false);
+    //this.renderer.setElementClass(this.inputElement[0], 'valid', false);
   }
 }

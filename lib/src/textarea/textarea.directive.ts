@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit, Optional, Renderer } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy, OnInit, Optional, Renderer2 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -24,7 +24,7 @@ export class MzTextareaDirective extends HandlePropChanges implements OnInit, On
   constructor(
     @Optional() private ngControl: NgControl,
     private elementRef: ElementRef,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) {
     super();
   }
@@ -58,7 +58,8 @@ export class MzTextareaDirective extends HandlePropChanges implements OnInit, On
   }
 
   initTextarea() {
-    this.renderer.setElementClass(this.textareaElement[0], 'materialize-textarea', true);
+    this.renderer.addClass(this.textareaElement[0], 'materialize-textarea');
+    //this.renderer.setElementClass(this.textareaElement[0], 'materialize-textarea', true);
   }
 
   initTextareaSubscription() {
@@ -71,7 +72,8 @@ export class MzTextareaDirective extends HandlePropChanges implements OnInit, On
     const labelElement = document.createElement('label');
     labelElement.setAttribute('for', this.id);
 
-    this.renderer.invokeElementMethod(this.textareaElement, 'after', [labelElement]);
+    (this.textareaElement as any).after.apply(this.textareaElement, [labelElement]);
+    //this.renderer.invokeElementMethod(this.textareaElement, 'after', [labelElement]);
 
     return $(labelElement);
   }
@@ -87,16 +89,20 @@ export class MzTextareaDirective extends HandlePropChanges implements OnInit, On
 
   handleLabel() {
     if (this.placeholder || this.textareaElement.val()) {
-      this.renderer.setElementClass(this.labelElement[0], 'active', true);
+      this.renderer.addClass(this.labelElement[0], 'active');
+      //this.renderer.setElementClass(this.labelElement[0], 'active', true);
     }
 
-    this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
+    (this.labelElement as any).text.apply(this.labelElement, [this.label]);
+    //this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
   }
 
   handleLength() {
     const length = this.length ? this.length.toString() : null;
 
-    this.renderer.setElementAttribute(this.textareaElement[0], 'data-length', length);
+    length === null ? this.renderer.removeAttribute(this.textareaElement[0], 'data-length')
+            : this.renderer.setAttribute(this.textareaElement[0], 'data-length', length);
+    //this.renderer.setElementAttribute(this.textareaElement[0], 'data-length', length);
 
     if (length) {
       this.setCharacterCount();
@@ -107,19 +113,24 @@ export class MzTextareaDirective extends HandlePropChanges implements OnInit, On
 
   handlePlaceholder() {
     const placeholder = !!this.placeholder ? this.placeholder : null;
-    this.renderer.setElementAttribute(this.textareaElement[0], 'placeholder', placeholder);
+    placeholder === null ? this.renderer.removeAttribute(this.textareaElement[0], 'placeholder')
+            : this.renderer.setAttribute(this.textareaElement[0], 'placeholder', placeholder);
+    //this.renderer.setElementAttribute(this.textareaElement[0], 'placeholder', placeholder);
 
     this.setLabelActive();
   }
 
   setCharacterCount() {
-    this.renderer.invokeElementMethod(this.textareaElement, 'characterCounter');
+    (this.textareaElement as any).characterCounter.apply(this.textareaElement);
+    //this.renderer.invokeElementMethod(this.textareaElement, 'characterCounter');
 
     // force validation
     // need setTimeout otherwise it wont trigger validation right away
     setTimeout(() => {
-      this.renderer.invokeElementMethod(this.textareaElement, 'trigger', ['input']);
-      this.renderer.invokeElementMethod(this.textareaElement, 'trigger', ['blur']);
+      (this.textareaElement as any).trigger.apply(this.textareaElement, ['input']);
+      (this.textareaElement as any).trigger.apply(this.textareaElement, ['blur']);
+      //this.renderer.invokeElementMethod(this.textareaElement, 'trigger', ['input']);
+      //this.renderer.invokeElementMethod(this.textareaElement, 'trigger', ['blur']);
     });
   }
 
@@ -129,19 +140,24 @@ export class MzTextareaDirective extends HandlePropChanges implements OnInit, On
     setTimeout(() => {
       const textareaValue = (<HTMLTextAreaElement>this.textareaElement[0]).value;
       const isActive = !!this.placeholder || !!textareaValue;
-      this.renderer.setElementClass(this.labelElement[0], 'active', isActive);
+      isActive ? this.renderer.addClass(this.labelElement[0], 'active')
+              : this.renderer.removeClass(this.labelElement[0], 'active');
+      //this.renderer.setElementClass(this.labelElement[0], 'active', isActive);
     });
   }
 
   removeCharacterCount() {
-    this.renderer.invokeElementMethod(this.textareaElement.siblings('.character-counter'), 'remove');
+    (this.textareaElement.siblings('.character-counter') as any).remove.apply(this.textareaElement.siblings('.character-counter'));
+    //this.renderer.invokeElementMethod(this.textareaElement.siblings('.character-counter'), 'remove');
 
     this.removeValidationClasses();
   }
 
   removeValidationClasses() {
     // reset valid/invalid state
-    this.renderer.setElementClass(this.textareaElement[0], 'invalid', false);
-    this.renderer.setElementClass(this.textareaElement[0], 'valid', false);
+    this.renderer.removeClass(this.textareaElement[0], 'invalid');
+    this.renderer.removeClass(this.textareaElement[0], 'valid');
+    //this.renderer.setElementClass(this.textareaElement[0], 'invalid', false);
+    //this.renderer.setElementClass(this.textareaElement[0], 'valid', false);
   }
 }

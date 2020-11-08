@@ -6,7 +6,7 @@ import {
   Directive,
   ElementRef,
   Input,
-  Renderer,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 
@@ -26,7 +26,7 @@ export class MzSidenavCollapsibleComponent implements AfterViewInit {
 
   constructor(
     public changeDetectorRef: ChangeDetectorRef,
-    public renderer: Renderer,
+    public renderer: Renderer2,
   ) { }
 
   ngAfterViewInit() {
@@ -41,7 +41,10 @@ export class MzSidenavCollapsibleComponent implements AfterViewInit {
     };
 
     // need setTimeout otherwise loading directly on the page cause an error
-    setTimeout(() => this.renderer.invokeElementMethod($(this.collapsible.nativeElement), 'collapsible', [options]));
+    setTimeout(() => {
+      ($(this.collapsible.nativeElement) as any).collapsible.apply($(this.collapsible.nativeElement), [options]);
+    });
+    //this.renderer.invokeElementMethod($(this.collapsible.nativeElement), 'collapsible', [options]));
 
     this.changeDetectorRef.detectChanges();
   }

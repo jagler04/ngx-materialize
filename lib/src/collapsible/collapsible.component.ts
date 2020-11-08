@@ -6,7 +6,7 @@ import {
   Input,
   OnDestroy,
   QueryList,
-  Renderer,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 
@@ -27,7 +27,7 @@ export class MzCollapsibleComponent implements AfterViewInit, OnDestroy {
   @ContentChildren(MzCollapsibleItemComponent) items: QueryList<MzCollapsibleItemComponent>;
 
   constructor(
-    public renderer: Renderer,
+    public renderer: Renderer2,
   ) { }
 
   ngAfterViewInit(): void {
@@ -55,7 +55,8 @@ export class MzCollapsibleComponent implements AfterViewInit, OnDestroy {
 
   handleDataCollapsible() {
     if (this.mode) {
-      this.renderer.setElementAttribute(this.collapsible.nativeElement, 'data-collapsible', this.mode);
+      (this.collapsible.nativeElement as any).dataCollapsible.apply(this.collapsible.nativeElement, this.mode);
+      //this.renderer.setElementAttribute(this.collapsible.nativeElement, 'data-collapsible', this.mode);
     }
   }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Renderer } from '@angular/core';
+import { AfterViewInit, Component, Renderer2 } from '@angular/core';
 
 import { ROUTE_ANIMATION, ROUTE_ANIMATION_HOST } from '../app.routing.animation';
 import { IPropertyRow } from '../shared/properties-table/properties-table.component';
@@ -38,7 +38,7 @@ export class CheckboxComponent implements AfterViewInit {
     },
   ];
 
-  constructor(private renderer: Renderer) { }
+  constructor(private renderer: Renderer2) { }
 
   ngAfterViewInit() {
     this.forceIndeterminate();
@@ -47,7 +47,7 @@ export class CheckboxComponent implements AfterViewInit {
   forceIndeterminate() {
     const checkboxElements = $('#indeterminate-checkbox, #filledin-indeterminate-checkbox');
     checkboxElements.each((index, element) => {
-      this.renderer.setElementProperty(element, 'indeterminate', true);
+      this.renderer.setProperty(element, 'indeterminate', true);
     });
   }
 }

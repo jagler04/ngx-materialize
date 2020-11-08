@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostBinding, Input, OnInit, Renderer } from '@angular/core';
+import { Directive, ElementRef, HostBinding, Input, OnInit, Renderer2 } from '@angular/core';
 
 import { HandlePropChanges } from '../shared/index';
 
@@ -17,7 +17,7 @@ export class MzRadioButtonDirective extends HandlePropChanges implements OnInit 
   inputContainerElement: JQuery;
   labelElement: JQuery;
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer) {
+  constructor(private elementRef: ElementRef, private renderer: Renderer2) {
     super();
   }
 
@@ -44,7 +44,8 @@ export class MzRadioButtonDirective extends HandlePropChanges implements OnInit 
     const labelElement = document.createElement('label');
     labelElement.setAttribute('for', this.id);
 
-    this.renderer.invokeElementMethod(this.inputElement, 'after', [labelElement]);
+    (this.inputElement as any).after.apply(this.inputElement, [labelElement]);
+    //this.renderer.invokeElementMethod(this.inputElement, 'after', [labelElement]);
 
     return $(labelElement);
   }
@@ -59,10 +60,13 @@ export class MzRadioButtonDirective extends HandlePropChanges implements OnInit 
   }
 
   handleLabel() {
-    this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
+    (this.labelElement as any).text.apply(this.labelElement, [this.label]);
+    //this.renderer.invokeElementMethod(this.labelElement, 'text', [this.label]);
   }
 
   handleWithGap() {
-    this.renderer.setElementClass(this.inputElement[0], 'with-gap', this.withGap);
+    this.withGap ? this.renderer.addClass(this.inputElement[0], 'with-gap')
+            : this.renderer.removeClass(this.inputElement[0], 'with-gap');
+    //this.renderer.setElementClass(this.inputElement[0], 'with-gap', this.withGap);
   }
 }

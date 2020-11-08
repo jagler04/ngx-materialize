@@ -3,7 +3,7 @@ import {
   Directive,
   ElementRef,
   Input,
-  Renderer,
+  Renderer2,
 } from '@angular/core';
 
 import { HandlePropChanges } from '../shared/index';
@@ -16,7 +16,7 @@ export class MzIconDirective extends HandlePropChanges implements AfterViewInit 
   @Input() icon: string;
   @Input() size: string;
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer) {
+  constructor(private elementRef: ElementRef, private renderer: Renderer2) {
     super();
   }
 
@@ -35,28 +35,35 @@ export class MzIconDirective extends HandlePropChanges implements AfterViewInit 
   }
 
   initMaterialize() {
-    this.renderer.setElementClass(this.elementRef.nativeElement, 'material-icons', true);
+    this.renderer.addClass(this.elementRef.nativeElement, 'material-icons');
+    //this.renderer.setElementClass(this.elementRef.nativeElement, 'material-icons', true);
   }
 
   handleAlign(previousValue?: string) {
     if (previousValue) {
-      this.renderer.setElementClass(this.elementRef.nativeElement, previousValue, false);
+      this.renderer.removeClass(this.elementRef.nativeElement, previousValue);
+      //this.renderer.setElementClass(this.elementRef.nativeElement, previousValue, false);
     }
     if (this.align) {
-      this.renderer.setElementClass(this.elementRef.nativeElement, this.align, true);
+      this.renderer.addClass(this.elementRef.nativeElement, this.align);
+      //this.renderer.setElementClass(this.elementRef.nativeElement, this.align, true);
     }
   }
 
   handleIcon() {
-    this.renderer.setElementProperty(this.elementRef.nativeElement, 'innerHTML', this.icon);
+    this.icon ? this.renderer.addClass(this.elementRef.nativeElement, 'innerHTML')
+            : this.renderer.removeClass(this.elementRef.nativeElement, 'innerHTML');
+    //this.renderer.setElementProperty(this.elementRef.nativeElement, 'innerHTML', this.icon);
   }
 
   handleSize(previousValue?: string) {
     if (previousValue) {
-      this.renderer.setElementClass(this.elementRef.nativeElement, previousValue, false);
+      this.renderer.removeClass(this.elementRef.nativeElement, previousValue);
+      //this.renderer.setElementClass(this.elementRef.nativeElement, previousValue, false);
     }
     if (this.size) {
-      this.renderer.setElementClass(this.elementRef.nativeElement, this.size, true);
+      this.renderer.addClass(this.elementRef.nativeElement, this.size);
+      //this.renderer.setElementClass(this.elementRef.nativeElement, this.size, true);
     }
   }
 }

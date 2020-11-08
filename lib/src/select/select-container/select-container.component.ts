@@ -65,8 +65,10 @@ export class MzSelectContainerComponent implements AfterViewInit, OnDestroy {
   initSelectSubscription() {
     if (this.mzSelectDirective) {
       this.mzSelectDirective.update
-        .subscribe(() => this.registerOnBlur())
-        .next();
+        // .subscribe(() => this.registerOnBlur())
+        // .next();
+        .subscribe({
+          next(){this.registerOnBlur()} });
     }
   }
 

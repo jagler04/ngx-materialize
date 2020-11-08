@@ -8,7 +8,7 @@ import {
   HostListener,
   Input,
   OnDestroy,
-  Renderer,
+  Renderer2,
   ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
@@ -79,7 +79,7 @@ export class MzValidationComponent implements AfterViewInit, OnDestroy {
     private resolver: ComponentFactoryResolver,
     private viewContainerRef: ViewContainerRef,
     public ngControl: NgControl,
-    public renderer: Renderer,
+    public renderer: Renderer2,
   ) { }
 
   ngAfterViewInit() {
@@ -94,8 +94,10 @@ export class MzValidationComponent implements AfterViewInit, OnDestroy {
   }
 
   clearValidationState(element: JQuery) {
-    this.renderer.setElementClass(element[0], 'valid', false);
-    this.renderer.setElementClass(element[0], 'invalid', false);
+    this.renderer.removeClass(element[0], 'valid');
+    this.renderer.removeClass(element[0], 'invalid');
+    // this.renderer.setElementClass(element[0], 'valid', false);
+    // this.renderer.setElementClass(element[0], 'invalid', false);
   }
 
   createRequiredSpanElement() {
@@ -103,7 +105,8 @@ export class MzValidationComponent implements AfterViewInit, OnDestroy {
       const spanElement = document.createElement('span');
       spanElement.setAttribute('class', 'placeholder-required');
       spanElement.textContent = ' *';
-      this.renderer.invokeElementMethod(this.labelElement, 'appendChild', [spanElement]);
+      (this.labelElement as any).appendChild.apply(this.labelElement, [spanElement]);
+      //this.renderer.invokeElementMethod(this.labelElement, 'appendChild', [spanElement]);
     }
   }
 
@@ -121,7 +124,8 @@ export class MzValidationComponent implements AfterViewInit, OnDestroy {
     this.errorMessageComponent.changeDetectorRef.detectChanges();
 
     const errorMessage = this.nativeElement.parent().children('mz-error-message');
-    this.renderer.invokeElementMethod(errorMessage, 'insertAfter', [this.labelElement]);
+    (errorMessage as any).insertAfter.apply(errorMessage, [this.labelElement]);
+    //this.renderer.invokeElementMethod(errorMessage, 'insertAfter', [this.labelElement]);
   }
 
   setValidationState() {
@@ -133,11 +137,16 @@ export class MzValidationComponent implements AfterViewInit, OnDestroy {
     // to handle field validity
     if (this.ngControl.control.enabled) {
       if (this.ngControl.control.valid) {
-        this.renderer.setElementClass(this.elementToAddValidation[0], 'valid', true);
-        this.renderer.setElementClass(this.elementToAddValidation[0], 'invalid', false);
+        this.renderer.addClass(this.elementToAddValidation[0], 'valid');
+        this.renderer.removeClass(this.elementToAddValidation[0], 'invalid');
+
+        //this.renderer.setElementClass(this.elementToAddValidation[0], 'valid', true);
+        //this.renderer.setElementClass(this.elementToAddValidation[0], 'invalid', false);
       } else {
-        this.renderer.setElementClass(this.elementToAddValidation[0], 'valid', false);
-        this.renderer.setElementClass(this.elementToAddValidation[0], 'invalid', true);
+        this.renderer.addClass(this.elementToAddValidation[0], 'invalid');
+        this.renderer.removeClass(this.elementToAddValidation[0], 'valid');
+        // this.renderer.setElementClass(this.elementToAddValidation[0], 'valid', false);
+        // this.renderer.setElementClass(this.elementToAddValidation[0], 'invalid', true);
       }
     } else {
       this.clearValidationState(this.elementToAddValidation);

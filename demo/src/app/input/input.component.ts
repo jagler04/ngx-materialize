@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, Renderer } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
 import { interval, Observable } from 'rxjs';
 import { first, skipWhile } from 'rxjs/operators';
 
@@ -86,7 +86,7 @@ export class InputComponent implements AfterViewInit, OnInit {
     },
   ];
 
-  constructor(private renderer: Renderer) { }
+  constructor(private renderer: Renderer2) { }
 
   ngOnInit() {
     this.setAutocomplete();
@@ -102,7 +102,12 @@ export class InputComponent implements AfterViewInit, OnInit {
       .pipe(
         skipWhile(() => !window['validate_field']),
         first())
-      .subscribe(() => this.renderer.invokeElementMethod($('#valid-input, #invalid-input'), 'trigger', ['blur']));
+      .subscribe(() =>
+      {
+        var validationElement = $('#valid-input, #invalid-input');
+        (validationElement as any).trigger.apply(validationElement, ['blur'])
+
+      });
   }
 
   setAutocomplete() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ActivitySector, Province, User } from '../models';
@@ -128,11 +128,13 @@ export class ValidationPlaygroundComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private renderer: Renderer,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
-    this.renderer.invokeElementMethod($('ul.tabs'), 'tabs');
+    var tabs = $('ul.tabs');
+    (tabs as any).tabs.apply(tabs);
+    //this.renderer.invokeElementMethod($('ul.tabs'), 'tabs');
     this.buildForm();
     this.addPhoneNumber();
   }
